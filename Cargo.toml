@@ -4,4 +4,6 @@ resolver = "2"
 members = [
     "multisig-improved",
     "multisig-improved/meta",
+    "passthrough",
+    "passthrough/meta",
 ]
