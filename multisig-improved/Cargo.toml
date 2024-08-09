@@ -1,12 +1,12 @@
 [package]
 name = "multisig-improved"
 version = "1.0.0"
-authors = ["Andrei Marinica <andrei.marinica@multiversx.com>"]
+authors = ["Andrei Marinica <andrei.marinica@multiversx.com>, Dorin Marian Iancu <dorin.iancu@multiversx.com>"]
 edition = "2021"
 publish = false
 
 [lib]
-path = "src/multisig_improved.rs"
+path = "src/lib.rs"
 
 [dependencies.multiversx-sc]
 version = "=0.52.3"
