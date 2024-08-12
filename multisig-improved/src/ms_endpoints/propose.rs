@@ -30,7 +30,7 @@ pub trait ProposeEndpointsModule:
         board_member_address: ManagedAddress,
         opt_signature: OptionalValue<SignatureArg<Self::Api>>,
     ) -> ActionId {
-        self.propose_action(Action::AddBoardMember(board_member_address), opt_signature)
+        self.propose_action(&Action::AddBoardMember(board_member_address), opt_signature)
     }
 
     /// Initiates proposer addition process..
@@ -41,7 +41,7 @@ pub trait ProposeEndpointsModule:
         proposer_address: ManagedAddress,
         opt_signature: OptionalValue<SignatureArg<Self::Api>>,
     ) -> ActionId {
-        self.propose_action(Action::AddProposer(proposer_address), opt_signature)
+        self.propose_action(&Action::AddProposer(proposer_address), opt_signature)
     }
 
     /// Removes user regardless of whether it is a board member or proposer.
@@ -51,7 +51,7 @@ pub trait ProposeEndpointsModule:
         user_address: ManagedAddress,
         opt_signature: OptionalValue<SignatureArg<Self::Api>>,
     ) -> ActionId {
-        self.propose_action(Action::RemoveUser(user_address), opt_signature)
+        self.propose_action(&Action::RemoveUser(user_address), opt_signature)
     }
 
     #[endpoint(proposeChangeQuorum)]
@@ -60,7 +60,7 @@ pub trait ProposeEndpointsModule:
         new_quorum: usize,
         opt_signature: OptionalValue<SignatureArg<Self::Api>>,
     ) -> ActionId {
-        self.propose_action(Action::ChangeQuorum(new_quorum), opt_signature)
+        self.propose_action(&Action::ChangeQuorum(new_quorum), opt_signature)
     }
 
     /// Propose a transaction in which the contract will perform a transfer-execute call.
@@ -90,14 +90,14 @@ pub trait ProposeEndpointsModule:
             endpoint_name: function_call.function_name,
             arguments: function_call.arg_buffer.into_vec_of_buffers(),
         };
-        let action_id = self.propose_action(
-            Action::SendTransferExecuteEgld(call_data.clone()),
-            opt_signature,
-        );
+        let action = Action::SendTransferExecuteEgld(call_data.clone());
+        let action_id = self.propose_action_no_checks(&action);
 
         if self.try_perform_egld_action_directly(&proposer, action_id, &call_data) {
             return OptionalValue::None;
         }
+
+        self.check_proposer_role_and_sign(action_id, &action, opt_signature);
 
         OptionalValue::Some(action_id)
     }
@@ -122,14 +122,14 @@ pub trait ProposeEndpointsModule:
             endpoint_name: function_call.function_name,
             arguments: function_call.arg_buffer.into_vec_of_buffers(),
         };
-        let action_id = self.propose_action(
-            Action::SendTransferExecuteEsdt(call_data.clone()),
-            opt_signature,
-        );
+        let action = Action::SendTransferExecuteEsdt(call_data.clone());
+        let action_id = self.propose_action_no_checks(&action);
 
         if self.try_perform_esdt_action_directly(&proposer, action_id, &call_data) {
             return OptionalValue::None;
         }
+
+        self.check_proposer_role_and_sign(action_id, &action, opt_signature);
 
         OptionalValue::Some(action_id)
     }
@@ -162,7 +162,7 @@ pub trait ProposeEndpointsModule:
             arguments: function_call.arg_buffer.into_vec_of_buffers(),
         };
 
-        self.propose_action(Action::SendAsyncCall(call_data), opt_signature)
+        self.propose_action(&Action::SendAsyncCall(call_data), opt_signature)
     }
 
     #[allow_multiple_var_args]
@@ -176,7 +176,7 @@ pub trait ProposeEndpointsModule:
         arguments: MultiValueEncoded<ManagedBuffer>,
     ) -> ActionId {
         self.propose_action(
-            Action::SCDeployFromSource(DeployArgs {
+            &Action::SCDeployFromSource(DeployArgs {
                 amount,
                 source,
                 code_metadata,
@@ -198,7 +198,7 @@ pub trait ProposeEndpointsModule:
         arguments: MultiValueEncoded<ManagedBuffer>,
     ) -> ActionId {
         self.propose_action(
-            Action::SCUpgradeFromSource {
+            &Action::SCUpgradeFromSource {
                 sc_address,
                 args: DeployArgs {
                     amount,
@@ -226,7 +226,7 @@ pub trait ProposeEndpointsModule:
         let existing_id = self.module_id().get_id(&sc_address);
         require!(existing_id == NULL_ID, "Module already known");
 
-        self.propose_action(Action::AddModule(sc_address), opt_signature)
+        self.propose_action(&Action::AddModule(sc_address), opt_signature)
     }
 
     #[endpoint(proposeRemoveModule)]
@@ -237,7 +237,7 @@ pub trait ProposeEndpointsModule:
     ) -> ActionId {
         let _ = self.module_id().get_id_non_zero(&sc_address);
 
-        self.propose_action(Action::RemoveModule(sc_address), opt_signature)
+        self.propose_action(&Action::RemoveModule(sc_address), opt_signature)
     }
 
     #[endpoint(proposeBatch)]
