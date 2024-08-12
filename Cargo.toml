@@ -2,6 +2,8 @@
 resolver = "2"
 
 members = [
+    "common-modules/only-by-multisig",
+    "common-modules/multisig-interactions",
     "multisig-improved",
     "multisig-improved/meta",
     "passthrough",
