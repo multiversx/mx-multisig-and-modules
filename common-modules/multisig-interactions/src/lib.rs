@@ -1,6 +1,6 @@
 #![no_std]
 
-use storage::Interaction;
+use storage::{Interaction, DISABLED, ENABLED};
 
 multiversx_sc::imports!();
 multiversx_sc::derive_imports!();
@@ -33,6 +33,7 @@ pub trait MultisigInteractions:
         self.add_allowed_users_for_interaction(sc_id, &endpoint_name, allowed_addresses);
         self.allowed_token(sc_id, &endpoint_name)
             .set(opt_allowed_token_id);
+        self.interaction_status(sc_id, &endpoint_name).set(ENABLED);
         self.all_interactions().insert(Interaction {
             sc_address,
             endpoint_name,
@@ -42,11 +43,17 @@ pub trait MultisigInteractions:
     #[endpoint(disableInteraction)]
     fn disable_interaction(&self, sc_address: ManagedAddress, endpoint_name: ManagedBuffer) {
         self.require_multisig_caller();
+
+        let sc_id = self.sc_address_to_id().get_id_non_zero(&sc_address);
+        self.interaction_status(sc_id, &endpoint_name).set(DISABLED);
     }
 
     #[endpoint(enableInteraction)]
     fn enable_interaction(&self, sc_address: ManagedAddress, endpoint_name: ManagedBuffer) {
         self.require_multisig_caller();
+
+        let sc_id = self.sc_address_to_id().get_id_non_zero(&sc_address);
+        self.interaction_status(sc_id, &endpoint_name).set(ENABLED);
     }
 
     #[endpoint(addAllowedAddresses)]
@@ -57,6 +64,9 @@ pub trait MultisigInteractions:
         allowed_addresses: MultiValueEncoded<ManagedAddress>,
     ) {
         self.require_multisig_caller();
+
+        let sc_id = self.sc_address_to_id().get_id_non_zero(&sc_address);
+        self.add_allowed_users_for_interaction(sc_id, &endpoint_name, allowed_addresses);
     }
 
     #[endpoint(setAllowedTokenForInteraction)]

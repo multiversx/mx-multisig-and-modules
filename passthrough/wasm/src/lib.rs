@@ -6,9 +6,9 @@
 
 // Init:                                 1
 // Upgrade:                              1
-// Endpoints:                            8
+// Endpoints:                           10
 // Async Callback (empty):               1
-// Total number of exported functions:  11
+// Total number of exported functions:  13
 
 #![no_std]
 
@@ -25,9 +25,11 @@ multiversx_sc_wasm_adapter::endpoints! {
         disableInteraction => disable_interaction
         enableInteraction => enable_interaction
         addAllowedAddresses => add_allowed_addresses
+        setAllowedTokenForInteraction => set_allowed_token_for_interaction
         canExecute => can_execute
         getAllowedUsersForInteraction => get_allowed_users_for_interaction
         getAllowedTokenForInteraction => get_allowed_token_for_interaction
+        getInteractionStatus => get_interaction_status
     )
 }
 
