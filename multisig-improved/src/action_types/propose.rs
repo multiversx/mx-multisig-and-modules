@@ -19,7 +19,7 @@ pub trait ProposeModule:
         opt_signature: OptionalValue<SignatureArg<Self::Api>>,
     ) -> ActionId {
         let action_id = self.propose_action_no_checks(action);
-        self.check_proposer_role_and_sign(action_id, &action, opt_signature);
+        self.check_proposer_role_and_sign(action_id, action, opt_signature);
 
         action_id
     }
