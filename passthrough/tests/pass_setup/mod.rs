@@ -10,6 +10,7 @@ use multisig_improved::{
     Multisig,
 };
 use multiversx_sc::{
+    codec::{Empty, TopEncode},
     imports::OptionalValue,
     types::{Address, FunctionCall, MultiValueEncoded},
 };
@@ -17,6 +18,7 @@ use multiversx_sc_scenario::{
     imports::{BlockchainStateWrapper, ContractObjWrapper},
     managed_address, managed_biguint, managed_buffer, rust_biguint, DebugApi,
 };
+use passthrough::Passthrough;
 
 pub struct PassSetup<PassThroughBuilder, MsImprovedBuilder, AdderBuilder>
 where
@@ -79,6 +81,14 @@ where
             })
             .assert_ok();
 
+        // init passthrough
+        let ms_address = ms_wrapper.address_ref().clone();
+        b_mock
+            .execute_tx(&ms_owner, &pass_wrapper, &rust_zero, |sc| {
+                sc.init(managed_address!(&ms_address));
+            })
+            .assert_ok();
+
         Self {
             b_mock,
             first_board_member,
@@ -95,7 +105,7 @@ where
         to: &Address,
         egld_amount: u64,
         function_name: &[u8],
-        args: Vec<&[u8]>,
+        args: Vec<Vec<u8>>,
     ) -> ActionId {
         let mut action_id = 0;
 
@@ -175,5 +185,53 @@ where
                 },
             )
             .assert_ok();
+    }
+
+    pub fn propose_add_module(&mut self, sc_address: &Address) -> ActionId {
+        let mut action_id = 0;
+
+        self.b_mock
+            .execute_tx(
+                &self.first_board_member,
+                &self.ms_wrapper,
+                &rust_biguint!(0),
+                |sc| {
+                    action_id =
+                        sc.propose_add_module(managed_address!(sc_address), OptionalValue::None);
+                },
+            )
+            .assert_ok();
+
+        action_id
+    }
+
+    pub fn propose_add_interaction(
+        &mut self,
+        sc_address: &Address,
+        endpoint_name: &[u8],
+        allowed_addresses: Vec<Address>,
+    ) -> ActionId {
+        let mut args = Vec::new();
+        let mut encoded_sc_address = Vec::new();
+        let _ = sc_address.top_encode(&mut encoded_sc_address);
+        args.push(encoded_sc_address);
+        args.push(endpoint_name.to_vec());
+
+        let mut encoded_opt = Vec::new();
+        let _ = Option::<Empty>::None.top_encode(&mut encoded_opt);
+        args.push(encoded_opt);
+
+        for address in allowed_addresses {
+            let mut encoded_address = Vec::new();
+            let _ = address.top_encode(&mut encoded_address);
+            args.push(encoded_address);
+        }
+
+        self.propose_transfer_execute(
+            &self.pass_wrapper.address_ref().clone(),
+            0,
+            b"addInteraction",
+            args,
+        )
     }
 }

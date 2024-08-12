@@ -23,6 +23,7 @@ pub trait MultisigInteractions:
         allowed_addresses: MultiValueEncoded<ManagedAddress>,
     ) {
         self.require_multisig_caller();
+        self.require_sc_address(&sc_address);
         self.require_interaction_not_added(sc_address.clone(), endpoint_name.clone());
 
         if let Some(token_id) = &opt_allowed_token_id {
