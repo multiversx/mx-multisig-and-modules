@@ -22,3 +22,10 @@ num-bigint = "0.4"
 
 [dev-dependencies.multiversx-sc-scenario]
 version = "=0.52.3"
+
+[dev-dependencies.multisig-improved]
+path = "../multisig-improved"
+
+[dev-dependencies.adder]
+git = "https://github.com/multiversx/mx-contracts-rs"
+rev = "f5cf436"
