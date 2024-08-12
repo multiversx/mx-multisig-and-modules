@@ -18,19 +18,8 @@ pub trait ProposeModule:
         action: &Action<Self::Api>,
         opt_signature: OptionalValue<SignatureArg<Self::Api>>,
     ) -> ActionId {
-        let proposer = self.get_proposer(action, opt_signature);
-        let (proposer_id, proposer_role) = self.get_id_and_role(&proposer);
-        proposer_role.require_can_propose::<Self::Api>();
-
-        let action_id = self.action_mapper().push(action);
-        let quorum = self.quorum().get();
-        self.quorum_for_action(action_id).set(quorum);
-
-        if proposer_role.can_sign() {
-            // also sign
-            // since the action is newly created, the proposer can be the only signer
-            let _ = self.action_signer_ids(action_id).insert(proposer_id);
-        }
+        let action_id = self.propose_action_no_checks(action);
+        self.check_proposer_role_and_sign(action_id, &action, opt_signature);
 
         action_id
     }
