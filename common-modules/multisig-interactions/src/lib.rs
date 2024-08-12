@@ -89,7 +89,7 @@ pub trait MultisigInteractions:
         endpoint_name: &ManagedBuffer,
         allowed_addresses: MultiValueEncoded<ManagedAddress>,
     ) {
-        let mut interaction_user_mapper = self.allowed_users_for_interaction(sc_id, &endpoint_name);
+        let mut interaction_user_mapper = self.allowed_users_for_interaction(sc_id, endpoint_name);
         for user in allowed_addresses {
             interaction_user_mapper.insert(user);
         }
