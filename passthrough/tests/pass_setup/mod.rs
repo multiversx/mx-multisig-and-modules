@@ -137,6 +137,33 @@ where
         action_id
     }
 
+    pub fn propose_transfer_execute_no_sig(
+        &mut self,
+        from: &Address,
+        to: &Address,
+        egld_amount: u64,
+        function_name: &[u8],
+        args: Vec<Vec<u8>>,
+    ) {
+        self.b_mock
+            .execute_tx(from, &self.ms_wrapper, &rust_biguint!(0), |sc| {
+                let mut function_call = FunctionCall::new(function_name);
+                for arg in args {
+                    function_call = function_call.argument(&arg);
+                }
+
+                let result = sc.propose_transfer_execute(
+                    managed_address!(to),
+                    managed_biguint!(egld_amount),
+                    None,
+                    function_call,
+                    OptionalValue::None,
+                );
+                assert!(result.is_none());
+            })
+            .assert_ok();
+    }
+
     pub fn perform(&mut self, action_id: ActionId) {
         self.b_mock
             .execute_tx(
