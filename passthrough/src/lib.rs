@@ -4,7 +4,10 @@ multiversx_sc::imports!();
 
 #[multiversx_sc::contract]
 pub trait Passthrough:
-    only_by_multisig::OnlyByMultisig + multisig_interactions::MultisigInteractions
+    only_by_multisig::OnlyByMultisig
+    + multisig_interactions::MultisigInteractions
+    + multisig_interactions::views::MultisigInteractionsViews
+    + multisig_interactions::storage::MultisigInteractionsStorage
 {
     #[init]
     fn init(&self, multisig_address: ManagedAddress) {
