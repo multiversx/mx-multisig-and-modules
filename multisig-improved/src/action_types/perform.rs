@@ -4,6 +4,8 @@ use crate::common_types::action::{
     ActionFullInfo, ActionId, ActionStatus, CallActionData, EsdtTransferExecuteData,
 };
 
+use super::external_module::CanExecuteArgs;
+
 multiversx_sc::imports!();
 
 #[multiversx_sc::module]
@@ -55,12 +57,13 @@ pub trait PerformModule:
         action_id: ActionId,
         call_data: &CallActionData<Self::Api>,
     ) -> bool {
-        let can_execute = self.can_execute_action(
+        let can_execute = self.can_execute_action(CanExecuteArgs {
             proposer,
-            &call_data.to,
-            &call_data.egld_amount,
-            &PaymentsVec::new(),
-        );
+            sc_address: &call_data.to,
+            endpoint_name: &call_data.endpoint_name,
+            egld_value: &call_data.egld_amount,
+            esdt_payments: &PaymentsVec::new(),
+        });
         if !can_execute {
             return false;
         }
@@ -76,8 +79,13 @@ pub trait PerformModule:
         action_id: ActionId,
         call_data: &EsdtTransferExecuteData<Self::Api>,
     ) -> bool {
-        let can_execute =
-            self.can_execute_action(proposer, &call_data.to, &BigUint::zero(), &call_data.tokens);
+        let can_execute = self.can_execute_action(CanExecuteArgs {
+            proposer,
+            sc_address: &call_data.to,
+            endpoint_name: &call_data.endpoint_name,
+            egld_value: &BigUint::zero(),
+            esdt_payments: &call_data.tokens,
+        });
         if !can_execute {
             return false;
         }

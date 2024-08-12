@@ -4,6 +4,14 @@ multiversx_sc::imports!();
 
 pub type ModuleId = AddressId;
 
+pub struct CanExecuteArgs<'a, M: ManagedTypeApi> {
+    pub proposer: &'a ManagedAddress<M>,
+    pub sc_address: &'a ManagedAddress<M>,
+    pub endpoint_name: &'a ManagedBuffer<M>,
+    pub egld_value: &'a BigUint<M>,
+    pub esdt_payments: &'a PaymentsVec<M>,
+}
+
 mod external_module_proxy {
     use multiversx_sc_modules::transfer_role_proxy::PaymentsVec;
 
@@ -16,6 +24,7 @@ mod external_module_proxy {
             &self,
             proposer: ManagedAddress,
             sc_address: ManagedAddress,
+            endpoint_name: ManagedBuffer,
             egld_value: BigUint,
             esdt_payments: PaymentsVec<Self::Api>,
         ) -> bool;
@@ -26,13 +35,7 @@ mod external_module_proxy {
 pub trait ExternalModuleModule:
     crate::common_functions::CommonFunctionsModule + crate::state::StateModule
 {
-    fn can_execute_action(
-        &self,
-        proposer: &ManagedAddress,
-        sc_address: &ManagedAddress,
-        egld_value: &BigUint,
-        esdt_payments: &PaymentsVec<Self::Api>,
-    ) -> bool {
+    fn can_execute_action(&self, args: CanExecuteArgs<Self::Api>) -> bool {
         let module_id_mapper = self.module_id();
         for module_id in self.active_modules_ids().iter() {
             let opt_module_address = module_id_mapper.get_address(module_id);
@@ -42,10 +45,11 @@ pub trait ExternalModuleModule:
             let can_execute: bool = self
                 .external_sc_proxy(module_address)
                 .can_execute(
-                    proposer.clone(),
-                    sc_address.clone(),
-                    egld_value.clone(),
-                    esdt_payments.clone(),
+                    args.proposer.clone(),
+                    args.sc_address.clone(),
+                    args.endpoint_name.clone(),
+                    args.egld_value.clone(),
+                    args.esdt_payments.clone(),
                 )
                 .execute_on_dest_context();
 
