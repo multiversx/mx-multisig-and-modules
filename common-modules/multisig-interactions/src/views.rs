@@ -1,4 +1,4 @@
-use crate::storage::{InteractionStatus, PaymentsVec};
+use crate::storage::{InteractionStatus, PaymentsVec, DISABLED};
 
 multiversx_sc::imports!();
 
@@ -15,6 +15,11 @@ pub trait MultisigInteractionsViews: crate::storage::MultisigInteractionsStorage
     ) -> bool {
         let sc_id = self.sc_address_to_id().get_id(&sc_address);
         if sc_id == NULL_ID {
+            return false;
+        }
+
+        let interaction_status = self.interaction_status(sc_id, &endpoint_name).get();
+        if interaction_status == DISABLED {
             return false;
         }
 
