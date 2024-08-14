@@ -65,6 +65,23 @@ pub trait MultisigInteractions:
         self.add_allowed_users_for_interaction(sc_id, &endpoint_name, allowed_addresses);
     }
 
+    #[endpoint(removeAllowedAddresses)]
+    fn remove_allowed_addresses(
+        &self,
+        sc_address: ManagedAddress,
+        endpoint_name: ManagedBuffer,
+        to_remove: MultiValueEncoded<ManagedAddress>,
+    ) {
+        self.require_multisig_caller();
+
+        let sc_id = self.sc_address_to_id().get_id_non_zero(&sc_address);
+        let mut interaction_user_mapper = self.allowed_users_for_interaction(sc_id, &endpoint_name);
+        for user in to_remove {
+            let removed = interaction_user_mapper.swap_remove(&user);
+            require!(removed, "Unknown user");
+        }
+    }
+
     #[endpoint(setAllowedTokenForInteraction)]
     fn set_allowed_token_for_interaction(
         &self,
