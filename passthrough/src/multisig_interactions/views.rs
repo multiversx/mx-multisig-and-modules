@@ -28,27 +28,7 @@ pub trait MultisigInteractionsViews: super::storage::MultisigInteractionsStorage
             return false;
         }
 
-        let opt_allowed_token = self.allowed_token(sc_id, &endpoint_name).get();
-        match opt_allowed_token {
-            Some(allowed_token) => {
-                if egld_value > 0 && !allowed_token.is_egld() {
-                    return false;
-                }
-
-                for payment in &esdt_payments {
-                    if payment.token_identifier != allowed_token {
-                        return false;
-                    }
-                }
-            }
-            None => {
-                if egld_value > 0 || !esdt_payments.is_empty() {
-                    return false;
-                }
-            }
-        }
-
-        true
+        self.is_token_allowed(sc_id, &endpoint_name, &egld_value, &esdt_payments)
     }
 
     /// A result of ManagedAddress::zero() means anyone is allowed to call this endpoint
@@ -95,5 +75,35 @@ pub trait MultisigInteractionsViews: super::storage::MultisigInteractionsStorage
         let sc_id = self.sc_address_to_id().get_id_non_zero(&sc_address);
 
         self.interaction_status(sc_id, &endpoint_name).get()
+    }
+
+    fn is_token_allowed(
+        &self,
+        sc_id: AddressId,
+        endpoint_name: &ManagedBuffer,
+        egld_value: &BigUint,
+        esdt_payments: &PaymentsVec<Self::Api>,
+    ) -> bool {
+        let opt_allowed_token = self.allowed_token(sc_id, endpoint_name).get();
+        match opt_allowed_token {
+            Some(allowed_token) => {
+                if egld_value > &0 && !allowed_token.is_egld() {
+                    return false;
+                }
+
+                for payment in esdt_payments {
+                    if payment.token_identifier != allowed_token {
+                        return false;
+                    }
+                }
+            }
+            None => {
+                if egld_value > &0 || !esdt_payments.is_empty() {
+                    return false;
+                }
+            }
+        }
+
+        true
     }
 }
