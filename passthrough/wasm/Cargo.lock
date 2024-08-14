@@ -116,7 +116,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "only-by-multisig"
+name = "only-multisig"
 version = "0.0.0"
 dependencies = [
  "multiversx-sc",
@@ -127,7 +127,7 @@ name = "passthrough"
 version = "0.0.0"
 dependencies = [
  "multiversx-sc",
- "only-by-multisig",
+ "only-multisig",
 ]
 
 [[package]]

@@ -5,7 +5,7 @@ multiversx_sc::derive_imports!();
 
 #[multiversx_sc::module]
 pub trait MultisigInteractions:
-    only_by_multisig::OnlyByMultisig + super::storage::MultisigInteractionsStorage
+    only_multisig::OnlyMultisig + super::storage::MultisigInteractionsStorage
 {
     /// If allowed_addresses is empty, any account can call this endpoint
     /// For EGLD as allowed token, simply pass Some("EGLD")

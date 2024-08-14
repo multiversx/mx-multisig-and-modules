@@ -2,7 +2,7 @@
 resolver = "2"
 
 members = [
-    "common-modules/only-by-multisig",
+    "common-modules/only-multisig",
     "multisig-improved",
     "multisig-improved/meta",
     "passthrough",

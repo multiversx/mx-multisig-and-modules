@@ -6,7 +6,7 @@ pub mod multisig_interactions;
 
 #[multiversx_sc::contract]
 pub trait Passthrough:
-    only_by_multisig::OnlyByMultisig
+    only_multisig::OnlyMultisig
     + multisig_interactions::main::MultisigInteractions
     + multisig_interactions::views::MultisigInteractionsViews
     + multisig_interactions::storage::MultisigInteractionsStorage

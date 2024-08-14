@@ -3,7 +3,7 @@
 multiversx_sc::imports!();
 
 #[multiversx_sc::module]
-pub trait OnlyByMultisig {
+pub trait OnlyMultisig {
     fn require_sc_address(&self, address: &ManagedAddress) {
         require!(
             !address.is_zero() && self.blockchain().is_smart_contract(address),

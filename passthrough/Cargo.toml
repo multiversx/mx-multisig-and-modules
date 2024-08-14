@@ -11,8 +11,8 @@ path = "src/lib.rs"
 [dependencies.multiversx-sc]
 version = "=0.52.3"
 
-[dependencies.only-by-multisig]
-path = "../common-modules/only-by-multisig"
+[dependencies.only-multisig]
+path = "../common-modules/only-multisig"
 
 [dev-dependencies]
 num-bigint = "0.4"
