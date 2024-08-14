@@ -31,7 +31,7 @@ pub trait MultisigInteractionsViews: super::storage::MultisigInteractionsStorage
         self.is_token_allowed(sc_id, &endpoint_name, &egld_value, &esdt_payments)
     }
 
-    /// A result of ManagedAddress::zero() means anyone is allowed to call this endpoint
+    /// An empty result means anyone is allowed to call this endpoint
     #[view(getAllowedUsersForInteraction)]
     fn get_allowed_users_for_interaction(
         &self,
@@ -40,13 +40,11 @@ pub trait MultisigInteractionsViews: super::storage::MultisigInteractionsStorage
     ) -> MultiValueEncoded<ManagedAddress> {
         let mut result = MultiValueEncoded::new();
         let sc_id = self.sc_address_to_id().get_id_non_zero(&sc_address);
-        let mapper = self.allowed_users_for_interaction(sc_id, &endpoint_name);
-        if !mapper.is_empty() {
-            for user in mapper.iter() {
-                result.push(user);
-            }
-        } else {
-            result.push(ManagedAddress::zero())
+        for user in self
+            .allowed_users_for_interaction(sc_id, &endpoint_name)
+            .iter()
+        {
+            result.push(user);
         }
 
         result
