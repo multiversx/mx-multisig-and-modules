@@ -14,9 +14,6 @@ version = "=0.52.3"
 [dependencies.only-by-multisig]
 path = "../common-modules/only-by-multisig"
 
-[dependencies.multisig-interactions]
-path = "../common-modules/multisig-interactions"
-
 [dev-dependencies]
 num-bigint = "0.4"
 

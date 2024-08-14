@@ -1,16 +1,11 @@
-#![no_std]
-
-use storage::{Interaction, DISABLED, ENABLED};
+use super::storage::{Interaction, DISABLED, ENABLED};
 
 multiversx_sc::imports!();
 multiversx_sc::derive_imports!();
 
-pub mod storage;
-pub mod views;
-
 #[multiversx_sc::module]
 pub trait MultisigInteractions:
-    only_by_multisig::OnlyByMultisig + storage::MultisigInteractionsStorage
+    only_by_multisig::OnlyByMultisig + super::storage::MultisigInteractionsStorage
 {
     /// If allowed_addresses is empty, any account can call this endpoint
     /// For EGLD as allowed token, simply pass Some("EGLD")

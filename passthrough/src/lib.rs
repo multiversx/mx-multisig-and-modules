@@ -2,10 +2,12 @@
 
 multiversx_sc::imports!();
 
+pub mod multisig_interactions;
+
 #[multiversx_sc::contract]
 pub trait Passthrough:
     only_by_multisig::OnlyByMultisig
-    + multisig_interactions::MultisigInteractions
+    + multisig_interactions::main::MultisigInteractions
     + multisig_interactions::views::MultisigInteractionsViews
     + multisig_interactions::storage::MultisigInteractionsStorage
 {

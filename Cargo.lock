@@ -447,14 +447,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "multisig-interactions"
-version = "0.0.0"
-dependencies = [
- "multiversx-sc",
- "only-by-multisig",
-]
-
-[[package]]
 name = "multiversx-chain-scenario-format"
 version = "0.22.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -665,7 +657,6 @@ version = "0.0.0"
 dependencies = [
  "adder",
  "multisig-improved",
- "multisig-interactions",
  "multiversx-sc",
  "multiversx-sc-scenario",
  "num-bigint",

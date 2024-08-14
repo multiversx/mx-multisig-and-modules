@@ -1,9 +1,9 @@
-use crate::storage::{InteractionStatus, PaymentsVec, DISABLED};
+use super::storage::{InteractionStatus, PaymentsVec, DISABLED};
 
 multiversx_sc::imports!();
 
 #[multiversx_sc::module]
-pub trait MultisigInteractionsViews: crate::storage::MultisigInteractionsStorage {
+pub trait MultisigInteractionsViews: super::storage::MultisigInteractionsStorage {
     #[view(canExecute)]
     fn can_execute(
         &self,
