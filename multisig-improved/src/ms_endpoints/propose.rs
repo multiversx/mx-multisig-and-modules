@@ -91,7 +91,7 @@ pub trait ProposeEndpointsModule:
             arguments: function_call.arg_buffer.into_vec_of_buffers(),
         };
         let action = Action::SendTransferExecuteEgld(call_data.clone());
-        let action_id = self.propose_action_no_checks(&action);
+        let action_id = self.add_action(&action);
 
         if self.try_perform_egld_action_directly(&proposer, action_id, &call_data) {
             return OptionalValue::None;
@@ -123,7 +123,7 @@ pub trait ProposeEndpointsModule:
             arguments: function_call.arg_buffer.into_vec_of_buffers(),
         };
         let action = Action::SendTransferExecuteEsdt(call_data.clone());
-        let action_id = self.propose_action_no_checks(&action);
+        let action_id = self.add_action(&action);
 
         if self.try_perform_esdt_action_directly(&proposer, action_id, &call_data) {
             return OptionalValue::None;

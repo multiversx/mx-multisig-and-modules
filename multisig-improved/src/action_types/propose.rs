@@ -18,13 +18,13 @@ pub trait ProposeModule:
         action: &Action<Self::Api>,
         opt_signature: OptionalValue<SignatureArg<Self::Api>>,
     ) -> ActionId {
-        let action_id = self.propose_action_no_checks(action);
+        let action_id = self.add_action(action);
         self.check_proposer_role_and_sign(action_id, action, opt_signature);
 
         action_id
     }
 
-    fn propose_action_no_checks(&self, action: &Action<Self::Api>) -> ActionId {
+    fn add_action(&self, action: &Action<Self::Api>) -> ActionId {
         let action_id = self.action_mapper().push(action);
         let quorum = self.quorum().get();
         self.quorum_for_action(action_id).set(quorum);
