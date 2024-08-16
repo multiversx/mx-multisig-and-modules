@@ -87,7 +87,6 @@ fn execute_without_signatures_test() {
 }
 
 #[test]
-#[should_panic(expected = "only board members and proposers can propose")]
 fn try_execute_action_not_whitelisted() {
     let mut setup = PassSetup::new(
         passthrough::contract_obj,
@@ -110,11 +109,12 @@ fn try_execute_action_not_whitelisted() {
 
     let evil_guy = setup.b_mock.create_user_account(&rust_biguint!(0));
     let args = [[5u8][..].to_vec()].to_vec();
-    setup.propose_transfer_execute_no_sig(
+    setup.propose_transfer_execute_no_sig_expect_err(
         &evil_guy,
         &setup.adder_wrapper.address_ref().clone(),
         0,
         b"add",
         args,
+        "only board members and proposers can propose",
     );
 }
