@@ -639,10 +639,37 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 
 [[package]]
+name = "only-multisig"
+version = "0.0.0"
+dependencies = [
+ "multiversx-sc",
+]
+
+[[package]]
 name = "opaque-debug"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
+
+[[package]]
+name = "passthrough"
+version = "0.0.0"
+dependencies = [
+ "adder",
+ "multisig-improved",
+ "multiversx-sc",
+ "multiversx-sc-scenario",
+ "num-bigint",
+ "only-multisig",
+]
+
+[[package]]
+name = "passthrough-meta"
+version = "0.0.0"
+dependencies = [
+ "multiversx-sc-meta-lib",
+ "passthrough",
+]
 
 [[package]]
 name = "pathdiff"

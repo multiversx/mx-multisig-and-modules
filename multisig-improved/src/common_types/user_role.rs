@@ -73,7 +73,7 @@ fn usize_add_isize(value: &mut usize, delta: isize) {
 /// - remove user (board member / proposer)
 /// - reactivate removed user
 /// - convert between board member and proposer
-/// 
+///
 /// Will keep the board size and proposer count in sync.
 pub fn change_user_role<Sc: crate::state::StateModule + crate::external::events::EventsModule>(
     sc_ref: &Sc,
