@@ -27,7 +27,7 @@ pub trait MultisigInteractionsStorage {
         endpoint_name: &ManagedBuffer,
     ) -> UnorderedSetMapper<ManagedAddress>;
 
-    #[storage_mapper("tok")]
+    #[storage_mapper("token")]
     fn allowed_token(
         &self,
         sc_id: AddressId,
